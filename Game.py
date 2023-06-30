@@ -2,6 +2,7 @@
 import pygame
 from Button import Button
 from sys import exit
+from Enemies import enemies
 from Background import Background
 class Game:
     # private: this is put bc c++ or java sintax #
@@ -14,19 +15,35 @@ class Game:
     lvl1Screen = None
     clock = pygame.time.Clock()
     background = None
+    enemigos = None
 
     def __init__(self): #constructor de la clase
         pygame.init()
         self.nivel=1
-        self.startScreen=pygame.display.set_mode((800,400))
+        self.startScreen=pygame.display.set_mode((600,400))
         self.Screen =1
         pygame.display.set_caption("SpaceInvaders")
         self.background= Background()
+        self.enemigos = enemies()
 
     def get_font(self,size):  # Returns Press-Start-2P in the desired size
         return pygame.font.Font("Pixeltype.ttf", size)
     def lvlUp(self):
         self.nivel+=1
+    def renderEnemies(self):
+        n=0
+        h=0
+        for i in range(0,9):
+            n=0
+            for j in range(0,9):
+                n+=1
+                if self.enemigos.isDead(i,j)==False:
+                    self.startScreen.blit(self.enemigos.enemySkin, (60*n, 40*h)) #ideal config
+            h += 1
+
+
+
+
     def run(self):
         while self.Screen !=0:
             self.startScreen.fill("black")
@@ -77,6 +94,8 @@ class Game:
             self.background.checklimit()
             self.startScreen.blit(self.background.bg2,(0,self.background.topbg2))
             self.startScreen.blit(self.background.bg,(0,self.background.topbg1))
+            #render enemies
+            self.renderEnemies()
             PLAY_BACK = Button(image=None, pos=(700, 350),
                                text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
 
