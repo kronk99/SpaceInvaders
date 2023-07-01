@@ -1,7 +1,7 @@
 import pygame
 class Background:
-    bg = pygame.image.load("Background1.png")
-    bg2 =pygame.image.load("Background2.png")
+    bg = pygame.image.load("background1.png")
+    bg2 =pygame.image.load("background2.png")
     topbg1 = None
     topbg2=None
 

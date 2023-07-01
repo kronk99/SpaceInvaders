@@ -16,7 +16,7 @@ class Game:
     clock = pygame.time.Clock()
     background = None
     enemigos = None
-
+    index=0
     def __init__(self): #constructor de la clase
         pygame.init()
         self.nivel=1
@@ -38,7 +38,10 @@ class Game:
             for j in range(0,9):
                 n+=1
                 if self.enemigos.isDead(i,j)==False:
-                    self.startScreen.blit(self.enemigos.enemySkin, (60*n, 40*h)) #ideal config
+                    self.startScreen.blit(self.enemigos.enemyskinList[int(self.index)].convert_alpha(), (40+40*n +30*self.enemigos.xmovement, 25*h+self.enemigos.ymovement)) #ideal config
+                    self.index+=0.1
+                    if self.index>2 :
+                        self.index=0
             h += 1
 
 
@@ -85,7 +88,7 @@ class Game:
             self.clock.tick(60) # maximum frame rate
     def play(self):
         print("hola")
-
+#need a restart all here.
         while self.gameFlag ==True:
             PLAY_MOUSE_POS = pygame.mouse.get_pos()
             self.startScreen.fill("black")
@@ -95,8 +98,8 @@ class Game:
             self.startScreen.blit(self.background.bg2,(0,self.background.topbg2))
             self.startScreen.blit(self.background.bg,(0,self.background.topbg1))
             #render enemies
-            self.renderEnemies()
-            PLAY_BACK = Button(image=None, pos=(700, 350),
+            self.renderEnemies() #renderiza enemigos
+            PLAY_BACK = Button(image=None, pos=(500, 380),
                                text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
 
             PLAY_BACK.changeColor(PLAY_MOUSE_POS)
@@ -109,6 +112,8 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag =False
+                if event.type == pygame.USEREVENT:
+                    self.enemigos.move()
             pygame.display.update()
             self.clock.tick(60)
     def options(self):
