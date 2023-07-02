@@ -1,6 +1,7 @@
 #gameclass, will work ass the class that will contain everything
 import pygame
 from Button import Button
+from Player import player
 from sys import exit
 from Enemies import enemies
 from Background import Background
@@ -16,7 +17,9 @@ class Game:
     clock = pygame.time.Clock()
     background = None
     enemigos = None
+    jugador = None
     index=0
+    player_index = 0
     def __init__(self): #constructor de la clase
         pygame.init()
         self.nivel=1
@@ -25,11 +28,18 @@ class Game:
         pygame.display.set_caption("SpaceInvaders")
         self.background= Background()
         self.enemigos = enemies()
+        self.jugador = player()
 
     def get_font(self,size):  # Returns Press-Start-2P in the desired size
         return pygame.font.Font("Pixeltype.ttf", size)
     def lvlUp(self):
         self.nivel+=1
+    #RENDERS------------------------------------------------
+    def playerRender(self):
+        self.startScreen.blit(self.jugador.getrect(self.player_index),(self.jugador.xmovement ,self.jugador.ymovement))  # ideal config
+        self.player_index += 0.1
+        if self.player_index > 2:
+            self.player_index = 0
     def renderEnemies(self):
         n=0
         h=0
@@ -43,7 +53,7 @@ class Game:
                     if self.index>2 :
                         self.index=0
             h += 1
-
+    #END OF RENDERS------------------------------------------
 
 
 
@@ -97,11 +107,12 @@ class Game:
             self.background.checklimit()
             self.startScreen.blit(self.background.bg2,(0,self.background.topbg2))
             self.startScreen.blit(self.background.bg,(0,self.background.topbg1))
-            #render enemies
+            #renders
             self.renderEnemies() #renderiza enemigos
+            self.playerRender()
+            #renders end
             PLAY_BACK = Button(image=None, pos=(500, 380),
                                text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
-
             PLAY_BACK.changeColor(PLAY_MOUSE_POS)
             PLAY_BACK.update(self.startScreen)
 
@@ -114,6 +125,15 @@ class Game:
                         self.gameFlag =False
                 if event.type == pygame.USEREVENT:
                     self.enemigos.move()
+                if event.type == pygame.KEYDOWN :
+                    if event.key==pygame.K_SPACE:
+                        print("shooting")
+                    if event.key ==pygame.K_w:
+                        print("jumping")
+                    if event.key ==pygame.K_a:
+                        self.jugador.checkLimits(-30)
+                    if event.key==pygame.K_d:
+                        self.jugador.checkLimits(30)
             pygame.display.update()
             self.clock.tick(60)
     def options(self):
