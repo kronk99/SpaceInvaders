@@ -53,6 +53,9 @@ class Game:
                     if self.index>2 :
                         self.index=0
             h += 1
+    def renderLasers(self):
+        self.jugador.lasers.draw(self.startScreen)
+        self.enemigos.lasers.draw(self.startScreen)
     #END OF RENDERS------------------------------------------
 
 
@@ -107,10 +110,16 @@ class Game:
             self.background.checklimit()
             self.startScreen.blit(self.background.bg2,(0,self.background.topbg2))
             self.startScreen.blit(self.background.bg,(0,self.background.topbg1))
+            #updates
+            self.jugador.updateLaser()
+            self.enemigos.updateLasers()
+            #end of updates
             #renders
             self.renderEnemies() #renderiza enemigos
             self.playerRender()
+            self.renderLasers()
             #renders end
+
             PLAY_BACK = Button(image=None, pos=(500, 380),
                                text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
             PLAY_BACK.changeColor(PLAY_MOUSE_POS)
@@ -125,9 +134,10 @@ class Game:
                         self.gameFlag =False
                 if event.type == pygame.USEREVENT:
                     self.enemigos.move()
+                    self.enemigos.shooting()
                 if event.type == pygame.KEYDOWN :
                     if event.key==pygame.K_SPACE:
-                        print("shooting")
+                        self.jugador.shoot()
                     if event.key ==pygame.K_w:
                         print("jumping")
                     if event.key ==pygame.K_a:
