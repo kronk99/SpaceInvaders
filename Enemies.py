@@ -29,10 +29,10 @@ class enemies:
         self.lasers = pygame.sprite.Group() #shooting of enemies
 
     def deleteEnemy(self, posx, posy):
-        self.enemigos[posy][posx] = 0
+        self.enemigos[posx][posy] = 0
 
     def isDead(self, posx, posy):
-        if self.enemigos[posy][posx] != 0:
+        if self.enemigos[posx][posy] != 0:
             return False
         else:
             return True

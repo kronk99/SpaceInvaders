@@ -57,9 +57,28 @@ class Game:
         self.jugador.lasers.draw(self.startScreen)
         self.enemigos.lasers.draw(self.startScreen)
     #END OF RENDERS------------------------------------------
-
-
-
+    #COLLISION CHECKER:
+    def collisionCker(self):
+        #enemy collision
+        #a little bit inneficcient but, i discover the sprite class of pygame later on, so
+        #ill have to change everything in order to make it cleaner
+        #puedo meter un rectangulo aca , y que checkee con el rectangulo...
+        rectangulo = None
+        if self.jugador.lasers:
+            for laser in self.jugador.lasers:
+                n = 0
+                h = 0
+                for i in range(0, 9):
+                    n = 0
+                    for j in range(0, 9):
+                        n += 1
+                        if self.enemigos.isDead(i, j) == False:
+                            if laser.rect.collidepoint((40 + 40 * n + 30 * self.enemigos.xmovement, 25 * h + self.enemigos.ymovement)):
+                                self.enemigos.deleteEnemy(i,j)
+                                laser.kill()
+                                break
+                    h += 1
+    #END OF COLLISION CHECKER.
     def run(self):
         while self.Screen !=0:
             self.startScreen.fill("black")
@@ -115,16 +134,18 @@ class Game:
             self.enemigos.updateLasers()
             #end of updates
             #renders
-            self.renderEnemies() #renderiza enemigos
+            #self.renderEnemies() #renderiza enemigos
             self.playerRender()
             self.renderLasers()
+            self.renderEnemies()
             #renders end
-
+            #Collisions
+            self.collisionCker()
+            #end of collisions
             PLAY_BACK = Button(image=None, pos=(500, 380),
                                text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
             PLAY_BACK.changeColor(PLAY_MOUSE_POS)
             PLAY_BACK.update(self.startScreen)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
