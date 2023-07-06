@@ -1,17 +1,11 @@
 import pygame
-import random
-from Laser import Laser
-
 class enemy(pygame.sprite.Sprite):
-    countenemies = None
     enemySkin1 = pygame.image.load("enemy1.png")
     enemySkin2 = pygame.image.load("enemy2.png")
     enemySkin3 = pygame.image.load("enemy3.png")
-    enemyskinList=[enemySkin1,enemySkin2,enemySkin3]
     contadorx=None
     movementFlag =None
-    animationIndex=0
-    lasers = None
+
     def __init__(self, xpos, ypos):
         super().__init__()
         self.countenemies = 20
@@ -26,6 +20,8 @@ class enemy(pygame.sprite.Sprite):
 
 #this method needs to be called update because of polimorfism
     def update(self): #debe de moverse de izquierda a derecha y siempre hacia abajo.
+        #bc of how this was programmed , in here i will update the sprite animation and
+        #the movement at the same time
         if self.movementFlag ==True:
             if self.contadorx==7: #aritmetica para el movimiento :prueba y error
                 self.rect.y+=20
@@ -41,15 +37,7 @@ class enemy(pygame.sprite.Sprite):
                 self.rect.x-=20
                 self.contadorx -= 1
                 #print("el contador es:"+str(self.contadorx))
-    def shooting(self):
-        #note to self, bc how the lasers were programed, will only shoot if the spawn
-        #is greater than -10 , so , if the player doesnt kill the aliens, this probability
-        #will increase, making the game harder, (its not a bug its a freature!)
-        n = random.randint(0,9)
-        h = random.randint(0,9)
-        self.lasers.add(Laser((40 + 40 * n + 30 * self.rect.x, 25 * h + self.rect.y),+3 , "red"))
-    def updateLasers(self):
-        self.lasers.update()
+
 
 
 
