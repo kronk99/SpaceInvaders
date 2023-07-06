@@ -3,7 +3,7 @@ import pygame
 from Button import Button
 from Player import player
 from sys import exit
-from Enemies import enemies
+from Enemies import enemy
 from Background import Background
 class Game:
     # private: this is put bc c++ or java sintax #
@@ -20,6 +20,8 @@ class Game:
     jugador = None
     index=0
     player_index = 0
+    enemyRow= None
+    enemyColum = None
     def __init__(self): #constructor de la clase
         pygame.init()
         self.nivel=1
@@ -27,58 +29,54 @@ class Game:
         self.Screen =1
         pygame.display.set_caption("SpaceInvaders")
         self.background= Background()
-        self.enemigos = enemies()
+        self.enemigos = pygame.sprite.Group()
         self.jugador = player()
+        self.enemyRow=9
+        self.enemyColum=9
 
     def get_font(self,size):  # Returns Press-Start-2P in the desired size
         return pygame.font.Font("Pixeltype.ttf", size)
     def lvlUp(self):
         self.nivel+=1
+    #SETUP ---------------------------------------
+    def alien_setup(self, x_distance=50, y_distance=-190, x_offset=45, y_offset=25):
+        for row_index, row in enumerate(range(self.enemyRow)):
+            for col_index, col in enumerate(range(self.enemyColum)):
+                x =  x_distance +col_index * x_offset
+                y = y_distance +row_index * y_offset
+
+                if row_index == 0:
+                    alien_sprite = enemy(x,y)
+                elif 1 <= row_index <= 2:
+                    alien_sprite = enemy(x,y)
+                else:
+                    alien_sprite =enemy(x,y)
+                self.enemigos.add(alien_sprite)
+
+    #END OF SETUP---------------
     #RENDERS------------------------------------------------
     def playerRender(self):
         self.startScreen.blit(self.jugador.getrect(self.player_index),(self.jugador.xmovement ,self.jugador.ymovement))  # ideal config
         self.player_index += 0.1
         if self.player_index > 2:
             self.player_index = 0
-    def renderEnemies(self):
-        n=0
-        h=0
-        for i in range(0,9):
-            n=0
-            for j in range(0,9):
-                n+=1
-                if self.enemigos.isDead(i,j)==False:
-                    self.startScreen.blit(self.enemigos.enemyskinList[int(self.index)].convert_alpha(), (40+40*n +30*self.enemigos.xmovement, 25*h+self.enemigos.ymovement)) #ideal config
-                    self.index+=0.1
-                    if self.index>2 :
-                        self.index=0
-            h += 1
+    #def renderEnemies(self):
+
     def renderLasers(self):
         self.jugador.lasers.draw(self.startScreen)
-        self.enemigos.lasers.draw(self.startScreen)
+        #self.enemigos.lasers.draw(self.startScreen)
     #END OF RENDERS------------------------------------------
     #COLLISION CHECKER:
-    def collisionCker(self):
+    #def collisionCker(self):
         #enemy collision
         #a little bit inneficcient but, i discover the sprite class of pygame later on, so
         #ill have to change everything in order to make it cleaner
         #puedo meter un rectangulo aca , y que checkee con el rectangulo...
-        rectangulo = None
-        if self.jugador.lasers:
-            for laser in self.jugador.lasers:
-                n = 0
-                h = 0
-                for i in range(0, 9):
-                    n = 0
-                    for j in range(0, 9):
-                        n += 1
-                        if self.enemigos.isDead(i, j) == False:
-                            if laser.rect.collidepoint((40 + 40 * n + 30 * self.enemigos.xmovement, 25 * h + self.enemigos.ymovement)):
-                                self.enemigos.deleteEnemy(i,j)
-                                laser.kill()
-                                break
-                    h += 1
+
     #END OF COLLISION CHECKER.
+    #UPDATES--------------------------------------------------------
+    #END OF UPDATES.
+
     def run(self):
         while self.Screen !=0:
             self.startScreen.fill("black")
@@ -120,6 +118,7 @@ class Game:
             self.clock.tick(60) # maximum frame rate
     def play(self):
         print("hola")
+        self.alien_setup()
 #need a restart all here.
         while self.gameFlag ==True:
             PLAY_MOUSE_POS = pygame.mouse.get_pos()
@@ -131,16 +130,16 @@ class Game:
             self.startScreen.blit(self.background.bg,(0,self.background.topbg1))
             #updates
             self.jugador.updateLaser()
-            self.enemigos.updateLasers()
+            #self.enemigos.updateLasers()
             #end of updates
             #renders
             #self.renderEnemies() #renderiza enemigos
             self.playerRender()
             self.renderLasers()
-            self.renderEnemies()
+            self.enemigos.draw(self.startScreen)
             #renders end
             #Collisions
-            self.collisionCker()
+            #self.collisionCker()
             #end of collisions
             PLAY_BACK = Button(image=None, pos=(500, 380),
                                text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
@@ -154,8 +153,8 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag =False
                 if event.type == pygame.USEREVENT:
-                    self.enemigos.move()
-                    self.enemigos.shooting()
+                    self.enemigos.update()
+                    #self.enemigos.shooting()
                 if event.type == pygame.KEYDOWN :
                     if event.key==pygame.K_SPACE:
                         self.jugador.shoot()
