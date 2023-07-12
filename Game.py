@@ -44,6 +44,7 @@ class Game:
     #extra instances
     health=None
     score = None
+    smasherSpawnCount = None
     #music related
     explotionsound = None
     laserSound = None
@@ -77,6 +78,7 @@ class Game:
         self.laserSound =pygame.mixer.Sound("laser.wav")
         self.laserSound.set_volume(0.1)
         self.scoreFlag=False
+        self.smasherSpawnCount=0
     def get_font(self,size):  # Returns Press-Start-2P in the desired size
         return pygame.font.Font("Pixeltype.ttf", size)
     #SETUP ---------------------------------------
@@ -93,12 +95,20 @@ class Game:
                 else:
                     alien_sprite =enemy(x,y)
                 self.enemigos.add(alien_sprite)
-        #test
-        self.smashers.add(smasher())
+
     def healthsetup(self):
         self.health.add(vida(10, 10))
         self.health.add(vida(10, 30))
         self.health.add(vida(10, 50))
+    def smasherSpawn(self):
+        self.smasherSpawnCount+=1
+        #inneficient af but works
+        if self.smasherSpawnCount ==9 and self.nivel==1:
+            self.smashers.add(smasher())
+            self.smasherSpawnCount=0
+        elif self.smasherSpawnCount ==7 and self.nivel==2:
+            self.smashers.add(smasher())
+            self.smasherSpawnCount=0
     #END OF SETUP---------------
     #RENDERS------------------------------------------------
     def playerRender(self):
@@ -142,16 +152,31 @@ class Game:
                         laser.kill() #cleaning purposess
                         #print("menosvida")
                         self.explotionsound.play(0)
+        if self.smashers:
+            for smasher in self.smashers:
+                if pygame.sprite.spritecollide(smasher, self.jugadorGroup,False):
+                    print("holaxd")
+                    #inneficient af , but its for patch up things purposes
+                    vida_list = self.health.sprites()
+                    if vida_list: #if the list is not empty
+                        vida_list[0].update() #unless
+                        smasher.kill() #cleaning purposess
+                        #print("menosvida")
+                        self.explotionsound.play(0)
+
 
     #END OF COLLISION CHECKER.
     #UPDATES--------------------------------------------------------
     def winCondition(self):
-        if (not self.enemigos.sprites() and self.nivel==2) or len(self.health.sprites())==0:
+        #this is the win condition , trows you the you win screen
+        if not self.enemigos.sprites() and self.nivel==2 or len(self.health.sprites())==0:
+            #the game ins entering the wincon need to fix that
             self.nivel=0
             self.gameFlag=False
             self.scoreFlag =True
             #on here i need to kill everything ,and set everything to normal state
             #aka startking game !!!!!!!!!!!!!!!!!!!!
+        #this is the next level screen, throws you the click to next level screen
         if not self.enemigos.sprites():
             self.lvlupFLAG =True
             self.gameFlag=False
@@ -202,7 +227,6 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     self.gameFlag = True
-                    self.play()
                     self.runflag=False
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     self.options()
@@ -216,17 +240,17 @@ class Game:
 #GAME LOOP ****************************************************************
     #*********************************
     def loadGame(self):
-        self.runflag =True
-        while self.Screen !=0:
+        self.runflag =True #this flag is for the startscreen
+        while self.Screen !=0: #this flag is for the start screen
             if self.runflag:
                 self.startscreen()
-            elif self.gameFlag==True:
+            elif self.gameFlag==True: #this flag is for the game screen
                 if self.nivel==0:
                     self.level1()
                 elif self.nivel==1:
-                    print("holaaa")
+                    self.level2()
                 else:
-                    print("holaaaaaaaauwug")
+                    self.level3()
 
             elif self.lvlupFLAG==True:
                 self.lvlupScene()
@@ -235,15 +259,7 @@ class Game:
 
 
 
-    def play(self):
-        if self.gameFlag==True:
-            print("entre aca we")
-            if self.nivel ==0:
-                self.level1()
-            elif self.nivel==1:
-                print("hola")
-            else:
-                print("hola2")
+
     def level1(self):
         print("hola")
         # SETUPS
@@ -262,10 +278,10 @@ class Game:
             self.updateLasers()
             self.winCondition()
             # test
-            self.smashers.update()
+            #self.smashers.update()
             # end of updates
             # renders
-            self.smashers.draw(self.startScreen)  # TEST
+            #self.smashers.draw(self.startScreen)  # TEST
             self.lifeRender()
             self.playerRender()
             self.renderLasers()
@@ -304,6 +320,122 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
             # end of events
+    def level2(self):
+        print("level2")
+        # SETUPS
+        self.alien_setup()
+        # need a restart all here.
+        while self.gameFlag == True:
+            PLAY_MOUSE_POS = pygame.mouse.get_pos()
+            self.startScreen.fill("black")
+            self.background.topbg1 += 1
+            self.background.topbg2 += 1
+            self.background.checklimit()
+            self.startScreen.blit(self.background.bg2, (0, self.background.topbg2))
+            self.startScreen.blit(self.background.bg, (0, self.background.topbg1))
+            # updates
+            self.updateLasers()
+            self.winCondition()
+            self.smashers.update()
+            # end of updates
+            # renders
+            self.smashers.draw(self.startScreen)  # TEST
+            self.lifeRender()
+            self.playerRender()
+            self.renderLasers()
+            self.renderScore()  # renders the score
+            self.renderEnemies()
+            # renders end
+            # Collisions
+            self.collisionCker()
+            # end of collisions
+            PLAY_BACK = Button(image=None, pos=(500, 380),
+                               text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
+            PLAY_BACK.changeColor(PLAY_MOUSE_POS)
+            PLAY_BACK.update(self.startScreen)
+            # events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
+                        self.gameFlag = False
+                        self.runflag = True
+                if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
+                    self.enemigos.update()
+                    self.shooting()
+                    self.smasherSpawn()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.jugador.shoot()
+                        self.laserSound.play(0)
+                    if event.key == pygame.K_w:
+                        print("jumping")
+                    if event.key == pygame.K_a:
+                        self.jugador.checkLimits(-30)
+                    if event.key == pygame.K_d:
+                        self.jugador.checkLimits(30)
+            pygame.display.update()
+            self.clock.tick(60)
+    def level3(self):
+        print("level2")
+        # SETUPS
+        self.alien_setup()
+        # need a restart all here.
+        while self.gameFlag == True:
+            PLAY_MOUSE_POS = pygame.mouse.get_pos()
+            self.startScreen.fill("black")
+            self.background.topbg1 += 1
+            self.background.topbg2 += 1
+            self.background.checklimit()
+            self.startScreen.blit(self.background.bg2, (0, self.background.topbg2))
+            self.startScreen.blit(self.background.bg, (0, self.background.topbg1))
+            # updates
+            self.updateLasers()
+            self.winCondition()
+            self.smashers.update()
+            # end of updates
+            # renders
+            self.smashers.draw(self.startScreen)  # TEST
+            self.lifeRender()
+            self.playerRender()
+            self.renderLasers()
+            self.renderScore()  # renders the score
+            self.renderEnemies()
+            # renders end
+            # Collisions
+            self.collisionCker()
+            # end of collisions
+            PLAY_BACK = Button(image=None, pos=(500, 380),
+                               text_input="BACK", font=self.get_font(25), base_color="White", hovering_color="Green")
+            PLAY_BACK.changeColor(PLAY_MOUSE_POS)
+            PLAY_BACK.update(self.startScreen)
+            # events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
+                        self.gameFlag = False
+                        self.runflag = True
+                if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
+                    self.enemigos.update()
+                    self.shooting()
+                    self.smasherSpawn()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.jugador.shoot()
+                        self.laserSound.play(0)
+                    if event.key == pygame.K_w:
+                        print("jumping")
+                    if event.key == pygame.K_a:
+                        self.jugador.checkLimits(-30)
+                    if event.key == pygame.K_d:
+                        self.jugador.checkLimits(30)
+            pygame.display.update()
+            self.clock.tick(60)
     def options(self):
         print("xd")
     def victoryScene(self):

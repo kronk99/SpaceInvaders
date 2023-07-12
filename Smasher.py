@@ -35,7 +35,9 @@ class smasher(pygame.sprite.Sprite):
         self.movement()
         self.checkmovement()
         self.animation()
-    def movement(self):
+    def movement(self): #movement method ,the idea is that the smasher spawns
+        #on one side on the screen ,then "run" over the player , like a suicide enemy
+        #and deals damage to its health
         if self.rect.y !=350:
             self.rect.y +=1
         else:
@@ -43,10 +45,10 @@ class smasher(pygame.sprite.Sprite):
                 self.rect.x +=1
             else:
                 self.rect.x -=1
-    def checkmovement(self):
+    def checkmovement(self): #switches the tipe of movement, from going down to moving left or right
         if self.rect.x >620 or self.rect.x < -20:
             self.kill()
-    def animation(self):
+    def animation(self): #animation of the enemy
         if self.rect.y <= 330:
             self.image = self.smasher_inAir[int(self.smasherIndex)]
             self.smasherIndex += 0.1
