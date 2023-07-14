@@ -163,8 +163,6 @@ class Game:
                         smasher.kill() #cleaning purposess
                         #print("menosvida")
                         self.explotionsound.play(0)
-
-
     #END OF COLLISION CHECKER.
     #UPDATES--------------------------------------------------------
     def winCondition(self):
@@ -174,12 +172,15 @@ class Game:
             self.nivel=0
             self.gameFlag=False
             self.scoreFlag =True
-            #on here i need to kill everything ,and set everything to normal state
-            #aka startking game !!!!!!!!!!!!!!!!!!!!
+            #cleaning purposes
+            self.cleanAll()
+            #on here i need to save the current store in the xml document, before cleaning all
         #this is the next level screen, throws you the click to next level screen
         if not self.enemigos.sprites():
             self.lvlupFLAG =True
             self.gameFlag=False
+            for laser in self.jugador.lasers:
+                laser.kill()
             #delete all things here too
 
 
@@ -196,6 +197,17 @@ class Game:
             #note to self, if the alien chosen is offscreen , then the bullet will be deleted
             #right away ,so that needs improvement , but for the time being , the extra if f
             #fixes it
+    def cleanAll(self):
+        for enemigo in self.enemigos:
+            enemigo.kill()
+        for laser in self.jugador.lasers:
+            laser.kill()
+        for eLaser in self.enemyLasers:
+            eLaser.kill()
+        self.nivel = 0
+        for health in self.health:
+            health.kill()
+        self.score=0
     #END OF UPDATES.
 #START SCREEN LOOOP ***************************************************************
     def startscreen(self):
@@ -256,10 +268,6 @@ class Game:
                 self.lvlupScene()
             else:
                 self.victoryScene()
-
-
-
-
     def level1(self):
         print("hola")
         # SETUPS
@@ -277,8 +285,7 @@ class Game:
             # updates
             self.updateLasers()
             self.winCondition()
-            # test
-            #self.smashers.update()
+            self.jugador.gravity()
             # end of updates
             # renders
             #self.smashers.draw(self.startScreen)  # TEST
@@ -304,6 +311,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag=True
+                        self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
                     self.shooting()
@@ -312,7 +320,7 @@ class Game:
                         self.jugador.shoot()
                         self.laserSound.play(0)
                     if event.key == pygame.K_w:
-                        print("jumping")
+                        self.jugador.jump()
                     if event.key == pygame.K_a:
                         self.jugador.checkLimits(-30)
                     if event.key == pygame.K_d:
@@ -337,6 +345,7 @@ class Game:
             self.updateLasers()
             self.winCondition()
             self.smashers.update()
+            self.jugador.gravity()
             # end of updates
             # renders
             self.smashers.draw(self.startScreen)  # TEST
@@ -362,6 +371,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag = True
+                        self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
                     self.shooting()
@@ -371,7 +381,7 @@ class Game:
                         self.jugador.shoot()
                         self.laserSound.play(0)
                     if event.key == pygame.K_w:
-                        print("jumping")
+                        self.jugador.jump()
                     if event.key == pygame.K_a:
                         self.jugador.checkLimits(-30)
                     if event.key == pygame.K_d:
@@ -395,6 +405,7 @@ class Game:
             self.updateLasers()
             self.winCondition()
             self.smashers.update()
+            self.jugador.gravity()
             # end of updates
             # renders
             self.smashers.draw(self.startScreen)  # TEST
@@ -420,6 +431,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag = True
+                        self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
                     self.shooting()
@@ -429,7 +441,7 @@ class Game:
                         self.jugador.shoot()
                         self.laserSound.play(0)
                     if event.key == pygame.K_w:
-                        print("jumping")
+                        self.jugador.jump()
                     if event.key == pygame.K_a:
                         self.jugador.checkLimits(-30)
                     if event.key == pygame.K_d:
@@ -467,10 +479,10 @@ class Game:
                 self.startScreen.fill("black")
                 _MOUSE_POS = pygame.mouse.get_pos()
                 #change the score to you win or you lose with a variable later on
-                MENU_TEXT = self.get_font(40).render("Excelente, click para el siguiente nivel", True, "#b68f40")
-                MENU_RECT = MENU_TEXT.get_rect(center=(200, 100))
+                MENU_TEXT = self.get_font(30).render("Excelente, click para el siguiente nivel", True, "#b68f40")
+                MENU_RECT = MENU_TEXT.get_rect(center=(300, 100))
                 RETURN_BUTTON = Button(image=None, pos=(300, 350),
-                                     text_input="return", font=self.get_font(35), base_color="#d7fcd4",
+                                     text_input="next level", font=self.get_font(35), base_color="#d7fcd4",
                                      hovering_color="White")
                 self.startScreen.blit(MENU_TEXT, MENU_RECT)
                 RETURN_BUTTON.update(self.startScreen)
