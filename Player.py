@@ -24,7 +24,11 @@ class player(pygame.sprite.Sprite):
     #for the gravity and jumping purposes
     def gravity(self):
         if self.rect.y <360 :
-            self.player_gravity+=1
+            self.player_gravity+=1 #only increases if the player is jumping
+            #if not the gravity keeps increasing ultil the player jumps
+            #if the player doesnt jump could cause the int variable to overflow
+            #worst case scenario, so to avoid that i did this, a little bit inneficient
+            #but the best solution at the moment for the gravity
             if self.rect.y+self.player_gravity >=360:
                 self.rect.y =360
                 self.player_gravity =0

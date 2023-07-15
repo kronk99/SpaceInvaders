@@ -10,6 +10,7 @@ from random import choice
 from Vida import vida
 from Score import score
 from Smasher import smasher
+from xmlManager import xmlManager
 class Game:
     # private: this is put bc c++ or java sintax #
     #flags used to change scenes
@@ -48,6 +49,7 @@ class Game:
     #music related
     explotionsound = None
     laserSound = None
+    xmlMnger = None
 
     def __init__(self): #constructor de la clase
         pygame.init()
@@ -79,6 +81,8 @@ class Game:
         self.laserSound.set_volume(0.1)
         self.scoreFlag=False
         self.smasherSpawnCount=0
+        self.xmlMnger = xmlManager()
+
     def get_font(self,size):  # Returns Press-Start-2P in the desired size
         return pygame.font.Font("Pixeltype.ttf", size)
     #SETUP ---------------------------------------
@@ -172,6 +176,7 @@ class Game:
             self.nivel=0
             self.gameFlag=False
             self.scoreFlag =True
+            self.xmlMnger.updateScore(self.score.actualScore)
             #cleaning purposes
             self.cleanAll()
             #on here i need to save the current store in the xml document, before cleaning all
@@ -311,6 +316,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag=True
+                        self.xmlMnger.updateScore(self.score.actualScore)
                         self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
@@ -371,6 +377,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag = True
+                        self.xmlMnger.updateScore(self.score.actualScore)
                         self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
@@ -431,6 +438,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag = True
+                        self.xmlMnger.updateScore(self.score.actualScore)
                         self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
@@ -449,7 +457,8 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
     def options(self):
-        print("xd")
+        self.scoreFlag = True
+        self.victoryScene()
     def victoryScene(self):
         if self.scoreFlag==True:
             print("entre aca papi")
@@ -457,12 +466,45 @@ class Game:
                 self.startScreen.fill("black")
                 _MOUSE_POS = pygame.mouse.get_pos()
                 #change the score to you win or you lose with a variable later on
-                MENU_TEXT = self.get_font(100).render("Score", True, "#b68f40")
-                MENU_RECT = MENU_TEXT.get_rect(center=(200, 100))
+                MENU_TEXT = self.get_font(100).render("High Scores!", True, "lightblue")
+
+                MENU_RECT = MENU_TEXT.get_rect(center=(200, 50))
+                player1text = self.get_font(35).render("-"+self.xmlMnger.getplayerName(0)+"...", True, "magenta")
+                player1rect = player1text.get_rect(center =(200 , 125))
+                player2text = self.get_font(35).render("-"+self.xmlMnger.getplayerName(1)+"...", True, "red")
+                player2rect = player1text.get_rect(center=(200, 145))
+                player3text = self.get_font(35).render("-"+self.xmlMnger.getplayerName(2)+"...", True, "purple")
+                player3rect = player1text.get_rect(center=(200, 165))
+                player4text = self.get_font(35).render("-"+self.xmlMnger.getplayerName(3)+"...", True, "yellow")
+                player4rect = player1text.get_rect(center=(200, 185))
+                player5text = self.get_font(35).render("-"+self.xmlMnger.getplayerName(4)+"...", True, "green")
+                player5rect = player1text.get_rect(center=(200, 205))
+                player1Score = self.get_font(35).render("-" + self.xmlMnger.getplayerScore(1) + "...", True, "magenta")
+                player1rect1 = player1text.get_rect(center=(350, 125))
+                player2Score = self.get_font(35).render("-" + self.xmlMnger.getplayerScore(2) + "...", True, "magenta")
+                player2rect1 = player1text.get_rect(center=(350, 145))
+                player3Score = self.get_font(35).render("-" + self.xmlMnger.getplayerScore(3) + "...", True, "magenta")
+                player3rect1 = player1text.get_rect(center=(350, 165))
+                player4Score = self.get_font(35).render("-" + self.xmlMnger.getplayerScore(4) + "...", True, "magenta")
+                player4rect1 = player1text.get_rect(center=(350, 185))
+                player5Score = self.get_font(35).render("-" + self.xmlMnger.getplayerScore(5) + "...", True, "magenta")
+                player5rect1 = player1text.get_rect(center=(350, 205))
                 RETURN_BUTTON = Button(image=None, pos=(300, 350),
                                      text_input="return", font=self.get_font(35), base_color="#d7fcd4",
                                      hovering_color="White")
+                #paint on screen
                 self.startScreen.blit(MENU_TEXT, MENU_RECT)
+                self.startScreen.blit(player1text, player1rect)
+                self.startScreen.blit(player2text, player2rect)
+                self.startScreen.blit(player3text, player3rect)
+                self.startScreen.blit(player4text, player4rect)
+                self.startScreen.blit(player5text, player5rect)
+                self.startScreen.blit(player1Score, player1rect1)
+                self.startScreen.blit(player2Score, player2rect1)
+                self.startScreen.blit(player3Score, player3rect1)
+                self.startScreen.blit(player4Score, player4rect1)
+                self.startScreen.blit(player5Score, player5rect1)
+                #end of paint on screen
                 RETURN_BUTTON.update(self.startScreen)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
