@@ -46,6 +46,8 @@ class Game:
     health=None
     score = None
     smasherSpawnCount = None
+    userName= None
+    userName_Rect=None
     #music related
     explotionsound = None
     laserSound = None
@@ -82,6 +84,10 @@ class Game:
         self.scoreFlag=False
         self.smasherSpawnCount=0
         self.xmlMnger = xmlManager()
+        self.userName=''
+        self.userName_Rect = pygame.Rect(230,300,100,25)
+
+
 
     def get_font(self,size):  # Returns Press-Start-2P in the desired size
         return pygame.font.Font("Pixeltype.ttf", size)
@@ -176,7 +182,7 @@ class Game:
             self.nivel=0
             self.gameFlag=False
             self.scoreFlag =True
-            self.xmlMnger.updateScore(self.score.actualScore)
+            self.xmlMnger.updateScore(self.score.actualScore ,self.userName)
             #cleaning purposes
             self.cleanAll()
             #on here i need to save the current store in the xml document, before cleaning all
@@ -217,21 +223,29 @@ class Game:
 #START SCREEN LOOOP ***************************************************************
     def startscreen(self):
         self.startScreen.fill("black")
+        #self.userName = 'hola'
+        pygame.draw.rect(self.startScreen,(255,255,255,255),self.userName_Rect,2)
+        player_name_surf = self.get_font(50).render(self.userName, True, (255, 155, 25, 55))
+        self.startScreen.blit(player_name_surf, (235, 300))
+        self.userName_Rect.w = player_name_surf.get_width()+10
+        #self.userName_Rect.h = player_name_surf.get_height() - 10
         MENU_MOUSE_POS = pygame.mouse.get_pos()
-
         MENU_TEXT = self.get_font(100).render("MAIN MENU", True, "#b68f40")
-        MENU_RECT = MENU_TEXT.get_rect(center=(400, 100))
-
-        PLAY_BUTTON = Button(image=None, pos=(400, 150),
+        MENU_RECT = MENU_TEXT.get_rect(center=(300, 100))
+        USERNAME_TEXT = self.get_font(50).render("Write your name", True, "lightblue")
+        USERNAME_RECT = MENU_TEXT.get_rect(center=(330, 300))
+        PLAY_BUTTON = Button(image=None, pos=(300, 150),
                              text_input="PLAY", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
-        OPTIONS_BUTTON = Button(image=None, pos=(400, 200),
+        OPTIONS_BUTTON = Button(image=None, pos=(300, 200),
                                 text_input="OPTIONS", font=self.get_font(75), base_color="#d7fcd4",
                                 hovering_color="White")
-        QUIT_BUTTON = Button(image=None, pos=(400, 250),
+        QUIT_BUTTON = Button(image=None, pos=(300, 250),
                              text_input="QUIT", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         self.startScreen.blit(MENU_TEXT, MENU_RECT)
-        self.victoryScene()
+        self.startScreen.blit(MENU_TEXT, MENU_RECT)
+        self.startScreen.blit(USERNAME_TEXT, USERNAME_RECT)
+        #self.victoryScene() idk if this has to go or not, check later
         for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(self.startScreen)
@@ -241,6 +255,12 @@ class Game:
                 pygame.quit()
                 self.Screen = 0
                 exit()
+            if event.type ==pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.userName =self.userName[:-1]
+                else:
+                    self.userName += event.unicode
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     self.gameFlag = True
@@ -316,7 +336,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag=True
-                        self.xmlMnger.updateScore(self.score.actualScore)
+                        self.xmlMnger.updateScore(self.score.actualScore , self.userName)
                         self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
@@ -377,7 +397,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag = True
-                        self.xmlMnger.updateScore(self.score.actualScore)
+                        self.xmlMnger.updateScore(self.score.actualScore,self.userName)
                         self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()
@@ -438,7 +458,7 @@ class Game:
                     if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                         self.gameFlag = False
                         self.runflag = True
-                        self.xmlMnger.updateScore(self.score.actualScore)
+                        self.xmlMnger.updateScore(self.score.actualScore,self.userName)
                         self.cleanAll()
                 if event.type == pygame.USEREVENT:  # the cound time event is in enemies class
                     self.enemigos.update()

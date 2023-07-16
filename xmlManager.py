@@ -17,14 +17,18 @@ class xmlManager:
             if i==number:
                 break
         return valor.text
-    def updateScore(self , score):
+    def updateScore(self , score , name):
         #this need more thinking, bc if a score is higher than the rest, then change it
+        valor= 0
         for value in self.root.iter('score'):
             if int(value.text) <= score:
                 print("entre aca")
                 print(str(value.text))
                 value.text=str(score)
                 value.set('updated' , 'yes')
+
                 break
+            valor+=1
+        self.root[valor].tag = name
         self.tree.write("HighScores/HScores.xml") #the update
         #self.tree.write('Hscores.xml')
