@@ -4,37 +4,18 @@
 
 ---
 
-## 📚 Curso
-Programación de Sistemas Embebidos
-
-## 👨‍💻 Estudiantes
-- Luis Alfredo González Sánchez
-- [Tu nombre aquí]
+#### 📚 Curso : Introduccion a la programación
 
 ---
 
 ## 🧠 Descripción
-Este proyecto implementa una versión moderna del clásico juego Space Invaders utilizando C++ y SDL2. El jugador controla una nave espacial que debe eliminar oleadas de enemigos antes de que lleguen al borde inferior de la pantalla. El juego incluye animaciones, efectos de sonido, y un sistema de puntuación.
-
----
-
-## 📋 Tabla de Contenidos
-- [Requisitos](#requisitos)
-- [Descarga e instalación](#descarga-e-instalación)
-- [Bibliotecas necesarias](#bibliotecas-necesarias)
-- [Cómo ejecutar](#cómo-ejecutar)
-- [Features](#features)
-- [Notas finales](#notas-finales)
-- [Licencia](#licencia)
-- [Créditos y Reconocimientos](#créditos-y-reconocimientos)
+Este proyecto implementa una versión moderna del clásico juego Space Invaders utilizando Python y Pygame. El jugador controla una nave espacial que debe eliminar oleadas de enemigos que caen antes de que lleguen al borde inferior de la pantalla. El juego incluye animaciones, efectos de sonido, y un sistema de puntuación .
 
 ---
 
 ## 🛠️ Requisitos
-- Sistema operativo: Windows / Linux
-- Lenguaje: C++
-- Librería gráfica: SDL2
-- Compilador: g++
+- Sistema operativo: Windows 
+- Python 3
 
 ---
 
@@ -42,3 +23,12 @@ Este proyecto implementa una versión moderna del clásico juego Space Invaders 
 1. Descargue el repositorio:
    ```bash
    git clone https://github.com/usuario/space-invaders.git
+## :alien: ¿ Cómo ejecutar? :alien:
+## Principales freatures  :trophy:
+### Enemigos
+---
+### jugador
+---
+### :video_game: niveles :video_game:
+---
+## :notebook: Notas adicionales :notebook:
