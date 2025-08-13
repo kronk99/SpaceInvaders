@@ -2,7 +2,7 @@
 
 🎮 Proyecto de desarrollo de un videojuego clásico tipo arcade.
 
----
+
 
 #### 📚 Curso : Introduccion a la programación
 
