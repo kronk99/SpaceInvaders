@@ -40,7 +40,7 @@ python main.py
 ---
 ## Principales Características  :trophy:
 ### Puntajes
-- Al iniciar el juego se observara la siguiente pantalla, se le solicita su nombre de jugador , el cual sera registrado para los altos puntajes
+- Al iniciar el juego se observara la pantalla de inicio donde se le solicita su nombre de jugador , el cual sera registrado para los altos puntajes
  > :alien: NOTA: se registraran solo si obtiene un puntaje mayor a los ya registrados :alien:
 <img width="585" height="401" alt="image" src="https://github.com/user-attachments/assets/70d738aa-b197-4255-96bc-03dbcb21a7a7" />
 
